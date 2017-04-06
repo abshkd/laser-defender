@@ -20,8 +20,9 @@ public class PlayerController : MonoBehaviour {
         this.transform.position = new Vector3(x,y,0f);
     }
 	
-	// Update is called once per frame
-	void Update () {
+	// FixedUpdate is called every 0.02 seconds.
+    //provides smooth animations
+	void FixedUpdate () {
 
         x += Input.GetAxis("Horizontal")* Speed;
         y += Input.GetAxis("Vertical") * Speed;
