@@ -8,10 +8,13 @@ public class EnemySpawner : MonoBehaviour {
     public float width = 10f;
     public float height = 5f;
     public float speed = 0.02f;
+    public float spawnDelay = 0.5f;
 
     private bool movingRight = true;
     private float xmax;
     private float xmin;
+
+
 
 	// Use this for initialization
 	void Start () {
@@ -24,12 +27,8 @@ public class EnemySpawner : MonoBehaviour {
 
         //we are going over each of the gizmos (Position Gizmo) we planted on the screen under 
         //EnemySpawn object heirarchy
-        foreach ( Transform child in transform)
-        {
-            GameObject enemy = Instantiate(enemyPrefab, child.transform.position, Quaternion.identity);
-            enemy.transform.parent = child; //we want the current object to be child of its Position gizmo
-                                            // this is for later ease of use. Else they become sibling of position.
-        }
+
+        SpawnUntilFull();
 	}
 
     public void OnDrawGizmos()
@@ -55,7 +54,69 @@ public class EnemySpawner : MonoBehaviour {
         {
             movingRight = false;
         }
+
+        if (AllMembersDead())
+        {
+            SpawnUntilFull();
+            
+            Debug.Log("All Dead");
+        }
 	}
 
+    bool AllMembersDead()
+    {
+        foreach(Transform childPositionGameObject in transform)
+        {
+            if(childPositionGameObject.childCount > 0)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    Transform NextFreePosition()
+    {
+        foreach(Transform child in transform)
+        {
+            if(child.childCount == 0)
+            {
+                return child;
+            }
+        }
+        
+        return null;
+    }
+
+
+    // we don't use this, instead use SpawnUntilFull. Here for reference of original spawn logic
+    void Respawn()
+    {
+        //we are going over each of the gizmos (Position Gizmo) we planted on the screen under 
+        //EnemySpawn object heirarchy
+        foreach (Transform child in transform)
+        {
+            GameObject enemy = Instantiate(enemyPrefab, child.transform.position, Quaternion.identity);
+            enemy.transform.parent = child; //we want the current object to be child of its Position gizmo
+                                            // this is for later ease of use. Else they become sibling of position.
+        }
+    }
+
+    void SpawnUntilFull()
+    {
+        Transform freePosition = NextFreePosition();
+
+        //defensive checking
+        if (freePosition)
+        {
+            GameObject enemy = Instantiate(enemyPrefab, freePosition.transform.position, Quaternion.identity);
+            enemy.transform.parent = freePosition;
+        }
+        if (NextFreePosition()) //prevent calling every `spawndelay`
+        {
+            //delay through recursive call instead of loop
+            Invoke("SpawnUntilFull", spawnDelay);
+        }
+    }
 
 }
