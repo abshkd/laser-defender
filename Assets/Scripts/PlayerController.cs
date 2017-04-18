@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour {
     public float padding = 1f;
     public float firingRate = 0.2f;
     public float health = 3;
+    public AudioClip fire;
+    public AudioClip iamhit;
 
 	// Use this for initialization
 	void Start () {
@@ -38,6 +40,7 @@ public class PlayerController : MonoBehaviour {
         GameObject projectile = Instantiate(laserPrefab, adjustPosition, Quaternion.identity);
 
         projectile.GetComponent<Rigidbody2D>().velocity = new Vector3(0, projectileSpeed, 0);
+        AudioSource.PlayClipAtPoint(fire, transform.position, 0.5f);
     }
 	// FixedUpdate is called every 0.02 seconds.
     //provides smooth animations
@@ -76,6 +79,7 @@ public class PlayerController : MonoBehaviour {
         if (laser)
         {
             health -= laser.GetDamage();
+            AudioSource.PlayClipAtPoint(iamhit, transform.position, 0.5f);
             laser.Hit();
             if (health <= 0)
             {
