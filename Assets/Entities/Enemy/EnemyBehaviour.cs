@@ -42,7 +42,7 @@ public class EnemyBehaviour : MonoBehaviour {
 
     void Fire()
     {
-        Vector3 adjustPosition = transform.position + new Vector3(0, -1, 0);
+        Vector3 adjustPosition = transform.position;
         GameObject projectile = Instantiate(laserPrefab, adjustPosition, Quaternion.identity);
         AudioSource.PlayClipAtPoint(fire, transform.position, 0.5f);
 

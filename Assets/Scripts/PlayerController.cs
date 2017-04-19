@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour {
     void Fire()
     {
         //don't collide your own laser.
-        Vector3 adjustPosition = transform.position + new Vector3(0, 1, 0);
+        Vector3 adjustPosition = transform.position;
 
         GameObject projectile = Instantiate(laserPrefab, adjustPosition, Quaternion.identity);
 
@@ -83,10 +83,17 @@ public class PlayerController : MonoBehaviour {
             laser.Hit();
             if (health <= 0)
             {
-                Destroy(gameObject);
+                Die();
             }
 
         }
+    }
+
+    void Die()
+    {
+        LevelManager levelMan = GameObject.Find("LevelManager").GetComponent<LevelManager>();
+        levelMan.LoadLevel("Win Screen");
+        Destroy(gameObject);
     }
 
 
